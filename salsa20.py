@@ -1,4 +1,4 @@
-
+import numpy
 
 class salsa20:
     # for 16 bytes key
@@ -60,11 +60,46 @@ class salsa20:
     def DoubleRound(self, x_matrix):
         result_matrix = self.RowRound(self.ColumnRound(x_matrix))
         return result_matrix
+    
+    
+    def split_into_parts(number, n_parts):
+        # number ='8dbdc844531e223f6cb816e1eee4c0cb'
+        # n_parts = 8
+        matrix = []
+    
+        for i in range (0, len(number), n_parts):
+            matrix.append(number[i : i+n_parts])
+        
+        for i in range(len(matrix)):
+            print("the matrix i: ", matrix[i])
+            matrix[i] = int.from_bytes(bytes.fromhex(matrix[i]), "big")
+        
+        return matrix
 
-    def HashFunction(self, a0, k1, a1, n, a2, k2, a3):
-        x_matrix = ((a0 >> 16) + k1, a1, n, a2, k2, a3
-        return self.DoubleRound()
+    def SalsaHash16(self, a0, k1, a1, n, a2, k2, a3):
+        # ai is equal to 4 bytes
+        # n is equal to nunce+block_number = 8+8 = 16 bytes
+        # k1 = k2 and is equal to 16 byte.
+        
+        # therefore, because the x_matrix is [4][4] and each cell is 4bytes, 
+        # so we divide ki and n into 4 parts
+        print("send k1")
+        k1_array = self.split_into_parts(k1, 8)
+        print("send k2")
+        k2_array = self.split_into_parts(k2, 8)
+        print("send n =", n)
+        n_array = self.split_into_parts(n, 8)
+        
+        x_matrix = [[a0, k1_array[0], k1_array[1], k1_array[2]],
+                    [k1_array[3], a1, n_array[0], n_array[1]],
+                    [n_array[2], n_array[3], a2, k2_array[0]],
+                    [k2_array[1],k2_array[2], k2_array[3], a3]]
+        
+        return self.DoubleRound(x_matrix)
 
 
     def ExmpansionFunction(self, n, k):
-        return self.HashFunction(self.a0, k, self.a1, n, self.a2, k, self.a3)
+        return self.SalsaHash16(self, self.a0, k, self.a1, n, self.a2, k, self.a3)
+    
+    
+    
