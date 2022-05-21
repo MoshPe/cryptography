@@ -148,7 +148,7 @@ class salsa20:
         # padding the message to be multiply of 64 bytes
         if (len(message) % 64 != 0):
            for i in range(0, 64 - (len(message) % 64)):
-               message += " "
+               message += " " # while space is using as padding
 
         
         for i in range(0, len(message), 64):

@@ -1,3 +1,6 @@
+# this is our Servser!!! not main
+
+
 # import RSA_signiture
 # import math
 # import sympy
@@ -5,24 +8,34 @@
 # from Crypto.PublicKey import ElGamal
 # from os import urandom
 
+
 from encryptor_bob import encryptor
 from decryptor_alice import decryptor
 
 print("Hello welcame our email:")
 
+# elgamal
+print("El gamal variables:")
+p, g, e = decryptor.elgamal_publicVriables(decryptor)
+print("p =",p ,"\n g =",g, "\n e =",e)
 
-# print("we want to sent the masseg:")
-print("Bob sent message:")
-nonce = 0xccc6f855277127780000000000000000
-ciphertext = encryptor.encryptor_salsa20(encryptor,"Email_message.txt", nonce)
+y1, y2 = decryptor.encrypt_secret_key_Salsa20(decryptor)
+print("\n y1 =",y1, "\n y2 =",y2 )
 
-print("the ciphertext is:")
-print(ciphertext)
 
-print("\nsent to Alice:")
-plaintext = decryptor.decrypt_salsa20(decryptor, ciphertext)
-print("the plaintext is:")
-print(plaintext)
+# #salsa20 
+# # print("we want to sent the masseg:")
+# print("Bob sent message:")
+# nonce = 0xccc6f855277127780000000000000000
+# ciphertext = encryptor.encryptor_salsa20(encryptor,"Email_message.txt", nonce)
+
+# print("the ciphertext is:")
+# print(ciphertext)
+
+# print("\nsent to Alice:")
+# plaintext = decryptor.decrypt_salsa20(decryptor, ciphertext)
+# print("the plaintext is:")
+# print(plaintext)
 
 
 
