@@ -1,27 +1,57 @@
 # import RSA_signiture
 # import math
 # import sympy
-import random
-from Crypto.PublicKey import ElGamal
-from os import urandom
+# import random
+# from Crypto.PublicKey import ElGamal
+# from os import urandom
 
-#
-elgamal = ElGamal.generate(144, urandom)
-elgamal_key = elgamal.publickey
-# prime number p:
-p = elgamal_key.__self__.p
+from encryptor_bob import encryptor
+from decryptor_alice import decryptor
 
-# g when gcd(g,p)=1
-g = elgamal_key.__self__.g
+print("Hello welcame our email:")
 
-# generate random integer d between 2 to p-1
-__d = random.randint(2, p - 1)
 
-# calculate e = g^d mod p
-e = pow(g, __d, p)
+# print("we want to sent the masseg:")
+print("Bob sent message:")
+nonce = 0xccc6f855277127780000000000000000
+ciphertext = encryptor.encryptor_salsa20(encryptor,"Email_message.txt", nonce)
 
-print("El gamal variables:")
-print("p =", p, "\n g =", g, "\n d =", __d, "\n e =", e, "\n")
+print("the ciphertext is:")
+print(ciphertext)
+
+print("\nsent to Alice:")
+plaintext = decryptor.decrypt_salsa20(decryptor, ciphertext)
+print("the plaintext is:")
+print(plaintext)
+
+
+
+
+
+
+
+
+
+
+
+
+# #
+# elgamal = ElGamal.generate(144, urandom)
+# elgamal_key = elgamal.publickey
+# # prime number p:
+# p = elgamal_key.__self__.p
+
+# # g when gcd(g,p)=1
+# g = elgamal_key.__self__.g
+
+# # generate random integer d between 2 to p-1
+# __d = random.randint(2, p - 1)
+
+# # calculate e = g^d mod p
+# e = pow(g, __d, p)
+
+# print("El gamal variables:")
+# print("p =", p, "\n g =", g, "\n d =", __d, "\n e =", e, "\n")
 
 # def primitiveRoot(p_val: int) -> int:
 #     print("Generating primitive root of p")

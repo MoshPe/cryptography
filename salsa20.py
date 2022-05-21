@@ -17,14 +17,14 @@ class salsa20:
     # a2 = [50, 45, 98, 121]
     # a3 = [116, 101, 32, 107]
 
-    def XOR(self, num1, num2):
+    def XOR_numbers(self, num1, num2):
         return num1 ^ num2
              
     
     def QuarterRound_calculate(self, a, b, c, numShift):
         result = (b + c) % pow(2, 32)
         result_shiftLeft7 = (pow(2, numShift) * result) % (pow(2, 32) - 1)
-        return self.XOR(self, a, result_shiftLeft7)
+        return self.XOR_numbers(self, a, result_shiftLeft7)
 
 
     def QuarterRound(self, y0, y1, y2, y3):
@@ -67,12 +67,8 @@ class salsa20:
     
     
     def split_into_parts(string, n_parts):
-        # print("hello split_into_parts")
-        # print(type(number))
-        # string ='8dbdc844531e223f6cb816e1eee4c0cb'
         #convert number in hex into string
         matrix = []
-        print("string:",string)
         for i in range (0, len((string)), n_parts):
             matrix.append(string[i : i+n_parts])
         
@@ -82,18 +78,14 @@ class salsa20:
         return matrix
 
     def SalsaHash16(self, a0, k1, a1, n, a2, k2, a3):
-        print("hello SalsaHash16")
         # ai is equal to 4 bytes
         # n is equal to nunce+block_number = 8+8 = 16 bytes
         # k1 = k2 and is equal to 16 byte.
         
         # therefore, because the x_matrix is [4][4] and each cell is 4bytes, 
         # so we divide ki and n into 4 parts
-        # print("send k1")
         k1_array = self.split_into_parts(str(hex(k1))[2:], 8)
-        # print("send k2")
         k2_array = self.split_into_parts(str(hex(k2))[2:], 8)
-        # print("send n =", n)
         n_array = self.split_into_parts(str(hex(n))[2:], 8)
         
         x_matrix = [[a0, k1_array[0], k1_array[1], k1_array[2]],
@@ -105,8 +97,74 @@ class salsa20:
 
 
     def ExmpansionFunction(self, n, k):
-        print("hello ExmpansionFunction")
         return self.SalsaHash16(self, self.a0, k, self.a1, n, self.a2, k, self.a3)
     
     
+############################################################
+    # helper function to encrypt & decript
+    def string_tobits(s):
+        result = []
+        for c in s:
+            bits = bin(ord(c))[2:]
+            bits = '00000000'[len(bits):] + bits
+            result.extend([int(b) for b in bits])
+        return result
+
+    def string_frombits(bits):
+        chars = []
+        for b in range(int(len(bits) / 8)):
+            byte = bits[b*8:(b+1)*8]
+            chars.append(chr(int(''.join([str(bit) for bit in byte]), 2)))
+        return ''.join(chars)
+    
+    
+    
+    def bitfield(n):
+        mestane = [1 if digit=='1' else 0 for digit in bin(n)[2:]]
+        bits = bin(n)[2:]
+        array = []*32
+        for i in range(0, 32 - len(bits)):
+            mestane.insert(0, 0)
+
+        return mestane
+
+
+    def flatten(self, matrix):
+        mat_bits = [self.bitfield(item) for sublist in matrix for item in sublist]
+        return [item for sublist in mat_bits for item in sublist]
+    
+    
+    def XOR_array(array1, array2, num_bytes):
+        result = []
+        for i in range(0, num_bytes*8):
+            result.append(array1[i] ^ array2[i])
+        return result
+    
+    def encrypt_decrypt(self, message, nonce, private_key):
+
+        # divide the encoded_message into blocks
+        outpuText = []
+        
+        # padding the message to be multiply of 64 bytes
+        if (len(message) % 64 != 0):
+           for i in range(0, 64 - (len(message) % 64)):
+               message += " "
+
+        
+        for i in range(0, len(message), 64):
+            block = message[i : i + 64]
+            block_bits = self.string_tobits(block)
+          
+            Ci = self.ExmpansionFunction(self, nonce, private_key)
+            Ci_bits = self.flatten(self, Ci)
+
+            # XOR between the output fromExmpansionFunction -Ci_bits to the block of the message- block_bits
+            resultXOR = self.XOR_array(Ci_bits, block_bits, 64)            
+            outpuText.append(self.string_frombits(resultXOR))
+            
+            nonce += 1  # update the block number
+            
+        
+        return ''.join(outpuText)
+
     
