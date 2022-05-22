@@ -16,7 +16,7 @@ print("Hello welcame our email:")
 
 print("Bob want to sent the masseg to Alice")
 
-print("Bob ask from Alice the Elgamal public variables")
+print("Bob request from Alice the Elgamal public variables")
 p, g, e = decryptor.elgamal_publicVriables(decryptor)
 print("Public variables that Alice send to bob are: \n - p =",p ,"\n - g =",g, "\n - e =",e)
 
@@ -28,10 +28,18 @@ print(ciphertext)
 y1, y2 = encryptor.encrypt_secret_key_Salsa20(encryptor, e, g, p)
 print("The Elgamal public variabels are: \n - y1 =",y1, "\n - y2 =",y2 )
 
+DS = encryptor.RSA_sign_request(encryptor)
+print("The RSA digital signature are: ", DS)
+
+print("Alice request from Bob RSA signature public variables (e, n)")
+RSA_public_e, RSA_modulus_n = encryptor.RSA_publicVriables(encryptor)
+
 print("\n Sent to Alice the ciphrtext, nonce, Y1, Y2, ***DS***:")
-decryptedMsg = decryptor.decrypt_salsa20(decryptor, ciphertext, y1, y2, 'DS')
+decryptedMsg = decryptor.decrypt_salsa20(decryptor, ciphertext, y1, y2, DS, RSA_public_e, RSA_modulus_n)
 print("the decrypted message is:")
 print(decryptedMsg)
+
+
 
 
 

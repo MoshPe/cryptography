@@ -6,24 +6,30 @@ from salsa20 import salsa20
 from os import urandom
 import random
 import secrets
+import RSA_signiture
 
 # import Email_message
 
 
 # hello I am Bob and I want to send an email to Alice
 class encryptor:
+    email_msg = ""
     #RSA
+    RSA_private, RSA_public_e, RSA_modulus_n = RSA_signiture.create_rsa_keys()
 
+    def RSA_publicVriables(self):
+        return self.RSA_public_e, self.RSA_modulus_n
+
+    def RSA_sign_request(self):
+        return RSA_signiture.create_rsa_signature(self.email_msg, self.RSA_private, self.RSA_modulus_n)
 
     # ############### elgamal ###############
     secret_key_Salsa20 = 0x8dbdc844531e223f6cb816e1eee4c0cb
-    
+
     def encrypt_secret_key_Salsa20(self, e, g, p):
         # encrypt the secret key of salsa20 and return Y1, Y2
         return elgamal.encryption_elgamal(e, g, p, self.secret_key_Salsa20)
-        
-    
-    
+
     # Salsa20:
     nonce = 0xccc6f855277127780000000000000000 # maybe find function to generate the nunce?
         
@@ -38,10 +44,10 @@ class encryptor:
     
     def encryptor_salsa20(self, filename2encrypt, nonce):
         # load the email message
-        email_mgs = open(filename2encrypt,'r').read()
+        self.email_msg = open(filename2encrypt,'r').read()
         
         # ciphertext = salsa20.encrypt_decrypt(salsa20, "Moshe peretz Tal-Chen Ben eliyahu Moshe peretz Tal-Chen Beneli", nonce, self.salsa20Key)
-        ciphertext = salsa20.encrypt_decrypt(salsa20, email_mgs, nonce, self.secret_key_Salsa20)
+        ciphertext = salsa20.encrypt_decrypt(salsa20, self.email_msg, nonce, self.secret_key_Salsa20)
 
         return ciphertext
 

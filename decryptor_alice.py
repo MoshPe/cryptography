@@ -3,6 +3,7 @@ from Crypto.PublicKey import ElGamal
 from salsa20 import salsa20
 from os import urandom
 import random
+import RSA_signiture
 import secrets
 
 
@@ -20,7 +21,6 @@ class decryptor:
     # pre prerequisite: Alice choose p, g, d and calculate e and sent to the encryptor p,g,e
     elgamal_variables = ElGamal.generate(161, urandom)
     elgamal_key = elgamal_variables.publickey
-    
     # prime number p:
     p = int(elgamal_key.__self__.p)
     # p = 2521092666689958352506689839571798066901999312563
@@ -38,15 +38,17 @@ class decryptor:
 
     def elgamal_publicVriables(self):
         return self.p, self.g, self.e
-            
 
     ############### salsa20 ###############
     nonce = 0xccc6f855277127780000000000000000 # maybe find function to generate the nunce?
-    def decrypt_salsa20(self, ciphertext, y1, y2, DS):
+    def decrypt_salsa20(self, ciphertext, y1, y2, DS, RSA_public_e, RSA_modulus_n):
         # get the secret_key_Salsa20 
         secret_key_Salsa20 = elgamal.decryption_elgamal(elgamal, y1, y2, self.d, self.p)
         plaintext = salsa20.encrypt_decrypt(salsa20, ciphertext, self.nonce, secret_key_Salsa20)
         # check the DS:
-            
-       
+        isVerified = RSA_signiture.verify_rsa_signature(DS, RSA_public_e, plaintext, RSA_modulus_n)
+        if isVerified:
+            print("Bob has been approved!!")
+        else:
+            print("OSCAR BRIDGE THE SYSTEM!!")
         return plaintext
