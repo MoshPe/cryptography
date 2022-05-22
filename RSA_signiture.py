@@ -1,12 +1,14 @@
 import hashlib
-
-from Crypto.PublicKey import ElGamal, RSA
+from cryptography.hazmat.primitives.asymmetric import rsa
+from cryptography.hazmat.backends import default_backend
 
 def create_rsa_keys():
-    rsa_key = RSA.generate(1024)
-    private_key = int(rsa_key.exportKey('DER').hex(), 16)
-    public_key = int(rsa_key.public_key().export_key('DER').hex(), 16)
-    return private_key, public_key, rsa_key.n  # modulus
+    # generate private/public key pair
+    key = rsa.generate_private_key(backend=default_backend(), public_exponent=65537, \
+                                   key_size=2048)
+    # get public key in OpenSSH format
+    public_key = key.public_key().public_numbers()
+    return key.private_numbers().d, public_key.e, public_key.n  # modulus
 
 # TODO explain sha256
 def create_rsa_signature(plaintext, private_key, modulo_n):

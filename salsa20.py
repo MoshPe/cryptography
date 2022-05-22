@@ -146,12 +146,6 @@ class salsa20:
         # divide the encoded_message into blocks
         outpuText = []
         
-        # padding the message to be multiply of 64 bytes
-        if (len(message) % 64 != 0):
-           for i in range(0, 64 - (len(message) % 64)):
-               message += " " # while space is using as padding
-
-        
         for i in range(0, len(message), 64):
             block = message[i : i + 64]
             block_bits = self.string_tobits(block)

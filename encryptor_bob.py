@@ -45,7 +45,11 @@ class encryptor:
     def encryptor_salsa20(self, filename2encrypt, nonce):
         # load the email message
         self.email_msg = open(filename2encrypt,'r').read()
-        
+
+        # padding the message to be multiply of 64 bytes
+        if (len(self.email_msg) % 64 != 0):
+            for i in range(0, 64 - (len(self.email_msg) % 64)):
+                self.email_msg += " "  # while space is using as padding
         # ciphertext = salsa20.encrypt_decrypt(salsa20, "Moshe peretz Tal-Chen Ben eliyahu Moshe peretz Tal-Chen Beneli", nonce, self.salsa20Key)
         ciphertext = salsa20.encrypt_decrypt(salsa20, self.email_msg, nonce, self.secret_key_Salsa20)
 

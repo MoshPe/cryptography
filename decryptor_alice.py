@@ -4,7 +4,8 @@ from salsa20 import salsa20
 from os import urandom
 import random
 import RSA_signiture
-import secrets
+import colorama
+from colorama import Fore, Style
 
 
 # The decryptor - Alice:
@@ -48,7 +49,7 @@ class decryptor:
         # check the DS:
         isVerified = RSA_signiture.verify_rsa_signature(DS, RSA_public_e, plaintext, RSA_modulus_n)
         if isVerified:
-            print("Bob has been approved!!")
+            print(Fore.GREEN + "Bob has been approved!!" + Style.RESET_ALL)
         else:
-            print("OSCAR BRIDGE THE SYSTEM!!")
+            print(Fore.RED + "OSCAR BRIDGE THE SYSTEM!!" + Style.RESET_ALL)
         return plaintext
