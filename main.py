@@ -14,28 +14,25 @@ from decryptor_alice import decryptor
 
 print("Hello welcame our email:")
 
-# elgamal
-print("El gamal variables:")
+print("Bob want to sent the masseg to Alice")
+
+print("Bob ask from Alice the Elgamal public variables")
 p, g, e = decryptor.elgamal_publicVriables(decryptor)
-print("p =",p ,"\n g =",g, "\n e =",e)
+print("Public variables that Alice send to bob are: \n - p =",p ,"\n - g =",g, "\n - e =",e)
 
-y1, y2 = decryptor.encrypt_secret_key_Salsa20(decryptor)
-print("\n y1 =",y1, "\n y2 =",y2 )
+nonce = 0xccc6f855277127780000000000000000
+ciphertext = encryptor.encryptor_salsa20(encryptor,"Email_message.txt", nonce)
+print("the ciphertext is:")
+print(ciphertext)
 
+y1, y2 = encryptor.encrypt_secret_key_Salsa20(encryptor, e, p, g)
+print("The Elgamal public variabels are: \n - y1 =",y1, "\n - y2 =",y2 )
 
-# #salsa20 
-# # print("we want to sent the masseg:")
-# print("Bob sent message:")
-# nonce = 0xccc6f855277127780000000000000000
-# ciphertext = encryptor.encryptor_salsa20(encryptor,"Email_message.txt", nonce)
+print("\n Sent to Alice the ciphrtext, nonce, Y1, Y2, ***DS***:")
+decryptedMsg = decryptor.decrypt_salsa20(decryptor, ciphertext, y1, y2, 'DS')
+print("the decrypted message is:")
+print(decryptedMsg)
 
-# print("the ciphertext is:")
-# print(ciphertext)
-
-# print("\nsent to Alice:")
-# plaintext = decryptor.decrypt_salsa20(decryptor, ciphertext)
-# print("the plaintext is:")
-# print(plaintext)
 
 
 

@@ -84,6 +84,7 @@ class salsa20:
         
         # therefore, because the x_matrix is [4][4] and each cell is 4bytes, 
         # so we divide ki and n into 4 parts
+        
         k1_array = self.split_into_parts(str(hex(k1))[2:], 8)
         k2_array = self.split_into_parts(str(hex(k2))[2:], 8)
         n_array = self.split_into_parts(str(hex(n))[2:], 8)

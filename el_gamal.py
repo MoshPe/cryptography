@@ -20,11 +20,11 @@ class elgamal:
         return y1, y2
 
 
-    def decryption_elgamal(self, y1, y2):
+    def decryption_elgamal(self, y1, y2, d, p):
         # calculate (y1^d)^-
-        y1_d_inv = pow(y1, self.__d, self.p)
+        y1_d_inv = pow(y1, d, p)
 
         # plaintext = (y2 * (y1^d)^-1)) % modulo_p
-        plaintext = (y2 * y1_d_inv) % self.p
+        plaintext = (y2 * y1_d_inv) % p
 
         return plaintext

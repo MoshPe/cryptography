@@ -1,15 +1,27 @@
 from salsa20 import salsa20
-# from el_gamal import elgamal
+from el_gamal import elgamal
 import numpy as np
+from Crypto.PublicKey import ElGamal
+from salsa20 import salsa20
+from os import urandom
+import random
+import secrets
+
 # import Email_message
+
 
 # hello I am Bob and I want to send an email to Alice
 class encryptor:
     #RSA
 
 
-    #elgamal
-    salsa20Key = 0x8dbdc844531e223f6cb816e1eee4c0cb # will get it from elgamal
+    # ############### elgamal ###############
+    secret_key_Salsa20 = 0x8dbdc844531e223f6cb816e1eee4c0cb
+    
+    def encrypt_secret_key_Salsa20(self, e, g, p):
+        # encrypt the secret key of salsa20 and return Y1, Y2
+        return elgamal.encryption_elgamal(e, g, p, self.secret_key_Salsa20)
+        
     
     
     # Salsa20:
@@ -29,7 +41,7 @@ class encryptor:
         email_mgs = open(filename2encrypt,'r').read()
         
         # ciphertext = salsa20.encrypt_decrypt(salsa20, "Moshe peretz Tal-Chen Ben eliyahu Moshe peretz Tal-Chen Beneli", nonce, self.salsa20Key)
-        ciphertext = salsa20.encrypt_decrypt(salsa20, email_mgs, nonce, self.salsa20Key)
+        ciphertext = salsa20.encrypt_decrypt(salsa20, email_mgs, nonce, self.secret_key_Salsa20)
 
         return ciphertext
 
