@@ -21,11 +21,11 @@ p, g, e = decryptor.elgamal_publicVriables(decryptor)
 print("Public variables that Alice send to bob are: \n - p =",p ,"\n - g =",g, "\n - e =",e)
 
 nonce = 0xccc6f855277127780000000000000000
-ciphertext = encryptor.encryptor_salsa20(encryptor,"Email_message.txt", nonce)
+ciphertext = encryptor.encryptor_salsa20(encryptor, "Email_message.txt", nonce)
 print("the ciphertext is:")
 print(ciphertext)
 
-y1, y2 = encryptor.encrypt_secret_key_Salsa20(encryptor, e, p, g)
+y1, y2 = encryptor.encrypt_secret_key_Salsa20(encryptor, e, g, p)
 print("The Elgamal public variabels are: \n - y1 =",y1, "\n - y2 =",y2 )
 
 print("\n Sent to Alice the ciphrtext, nonce, Y1, Y2, ***DS***:")
