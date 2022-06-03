@@ -4,20 +4,11 @@ from salsa20 import salsa20
 from os import urandom
 import random
 import RSA_signiture
-import colorama
 from colorama import Fore, Style
 
 
 # The decryptor - Alice:
-class decryptor:
-    # hexkey = secrets.token_hex(16)
-    # secret_key_Salsa20 = int(hexkey, 16)
-
-    # secret_key_Salsa20 = 0x8dbdc844531e223f6cb816e1eee4c0cb
-    
-    
-    ############### RSA ###############
-    
+class decryptor:   
     ############### elgamal ###############
     # pre prerequisite: Alice choose p, g, d and calculate e and sent to the encryptor p,g,e
     elgamal_variables = ElGamal.generate(161, urandom)
@@ -32,6 +23,7 @@ class decryptor:
 
     # generate random integer d between 2 to p-1
     d = random.randint(2, p - 1)
+    # d = 872362360549975597648220985046511570234990375919
 
     # calculate e = g^d mod p
     e = int(pow(g, d, p))
@@ -41,15 +33,22 @@ class decryptor:
         return self.p, self.g, self.e
 
     ############### salsa20 ###############
+    # hexkey = secrets.token_hex(16)
+    # secret_key_Salsa20 = int(hexkey, 16)    
     nonce = 0xccc6f855277127780000000000000000 # maybe find function to generate the nunce?
-    def decrypt_salsa20(self, ciphertext, y1, y2, DS, RSA_public_e, RSA_modulus_n):
+    
+    def decrypt_salsa20(self, ciphertext, y1, y2, DS, RSA_public_e, RSA_modulus_n, len_plaintext):
         # get the secret_key_Salsa20 
         secret_key_Salsa20 = elgamal.decryption_elgamal(elgamal, y1, y2, self.d, self.p)
         plaintext = salsa20.encrypt_decrypt(salsa20, ciphertext, self.nonce, secret_key_Salsa20)
+        
         # check the DS:
         isVerified = RSA_signiture.verify_rsa_signature(DS, RSA_public_e, plaintext, RSA_modulus_n)
         if isVerified:
             print(Fore.GREEN + "Bob has been approved!!" + Style.RESET_ALL)
         else:
             print(Fore.RED + "OSCAR BRIDGE THE SYSTEM!!" + Style.RESET_ALL)
+            
+        # Remove the padding
+        plaintext = plaintext[:len_plaintext]
         return plaintext

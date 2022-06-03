@@ -1,4 +1,3 @@
-import numpy
 
 class salsa20:
     # for 16 bytes key
@@ -6,10 +5,6 @@ class salsa20:
     a1 = int.from_bytes(bytearray([110, 100, 32, 49]), "big")
     a2 = int.from_bytes(bytearray([54, 45, 98, 121]), "big")
     a3 = int.from_bytes(bytearray([116, 101, 32, 107]), "big")
-    # a0 = [101, 120, 112, 97]
-    # a1 = [110, 100, 32, 49]
-    # a2 = [54, 45, 98, 121]
-    # a3 = [116, 101, 32, 107]
 
     # for 32 bytes key
     # a0 = [101, 120, 112, 97]
@@ -67,7 +62,6 @@ class salsa20:
     
     
     def split_into_parts(string, n_parts):
-        #convert number in hex into string
         matrix = []
         for i in range (0, len((string)), n_parts):
             matrix.append(string[i : i+n_parts])
@@ -78,12 +72,12 @@ class salsa20:
         return matrix
 
     def SalsaHash16(self, a0, k1, a1, n, a2, k2, a3):
-        # ai is equal to 4 bytes
+        # a_i is equal to 4 bytes
         # n is equal to nunce+block_number = 8+8 = 16 bytes
         # k1 = k2 and is equal to 16 byte.
         
-        # therefore, because the x_matrix is [4][4] and each cell is 4bytes, 
-        # so we divide ki and n into 4 parts
+        # therefore, because the x_matrix is [4][4] and each cell is 4 bytes, 
+        # then we divide ki and n into 4 parts
         
         k1_array = self.split_into_parts(hex(k1)[2:], 8)
         k2_array = self.split_into_parts(hex(k2)[2:], 8)
@@ -97,12 +91,31 @@ class salsa20:
         return self.DoubleRound(self, x_matrix)
 
 
-    def ExmpansionFunction(self, n, k):
+    def ExmpansionFunction16(self, n, k):
         return self.SalsaHash16(self, self.a0, k, self.a1, n, self.a2, k, self.a3)
     
+    def encrypt_decrypt(self, message, nonce, private_key):
+        # divide the encoded_message into blocks
+        outpuText = []
+        
+        for i in range(0, len(message), 64):
+            block = message[i : i + 64]
+            block_bits = self.string_tobits(block)
+          
+            Ci = self.ExmpansionFunction16(self, nonce, private_key)
+            Ci_bits = self.flatten(self, Ci)
+
+            # XOR between the output fromExmpansionFunction -Ci_bits to the block of the message- block_bits
+            resultXOR = self.XOR_array(Ci_bits, block_bits, 64)            
+            outpuText.append(self.string_frombits(resultXOR))
+            
+            nonce += 1  # update the block number
+            
+        return ''.join(outpuText)
     
-############################################################
-    # helper function to encrypt & decript
+    ############################################################
+    ########### Support function to encrypt & decrypt ###########
+    ############################################################
     def string_tobits(s):
         result = []
         for c in s:
@@ -123,7 +136,6 @@ class salsa20:
     def bitfield(n):
         mestane = [1 if digit=='1' else 0 for digit in bin(n)[2:]]
         bits = bin(n)[2:]
-        array = []*32
         for i in range(0, 32 - len(bits)):
             mestane.insert(0, 0)
 
@@ -141,25 +153,6 @@ class salsa20:
             result.append(array1[i] ^ array2[i])
         return result
     
-    def encrypt_decrypt(self, message, nonce, private_key):
 
-        # divide the encoded_message into blocks
-        outpuText = []
-        
-        for i in range(0, len(message), 64):
-            block = message[i : i + 64]
-            block_bits = self.string_tobits(block)
-          
-            Ci = self.ExmpansionFunction(self, nonce, private_key)
-            Ci_bits = self.flatten(self, Ci)
-
-            # XOR between the output fromExmpansionFunction -Ci_bits to the block of the message- block_bits
-            resultXOR = self.XOR_array(Ci_bits, block_bits, 64)            
-            outpuText.append(self.string_frombits(resultXOR))
-            
-            nonce += 1  # update the block number
-            
-        
-        return ''.join(outpuText)
 
     
