@@ -1,6 +1,7 @@
 from salsa20 import salsa20
 from el_gamal import elgamal
 import RSA_signiture
+import secrets
 
 
 # hello I am Bob and I want to send an email to Alice
@@ -18,7 +19,11 @@ class encryptor:
 
 
     ############### elgamal ###############
+    # keySize = 16
+    # baseHex = 16
+    # secret_key_Salsa20 = int(secrets.token_hex(keySize), baseHex)
     secret_key_Salsa20 = 0x8dbdc844531e223f6cb816e1eee4c0cb
+
 
     def encrypt_secret_key_Salsa20(self, e, g, p):
         # encrypt the secret key of salsa20 and return Y1, Y2
@@ -46,7 +51,7 @@ class encryptor:
         if (len(self.email_msg) % 64 != 0):
             for i in range(0, num_padding):
                 self.email_msg += "$"  # while space is using as padding
-                
+
         ciphertext = salsa20.encrypt_decrypt(salsa20, self.email_msg, nonce, self.secret_key_Salsa20)
 
         return ciphertext, len_plaintext

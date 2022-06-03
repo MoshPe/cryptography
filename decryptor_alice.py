@@ -44,10 +44,12 @@ class decryptor:
         
         # check the DS:
         isVerified = RSA_signiture.verify_rsa_signature(DS, RSA_public_e, plaintext, RSA_modulus_n)
+        print("\n*************************************")
         if isVerified:
-            print(Fore.GREEN + "Bob has been approved!!" + Style.RESET_ALL)
+            print("     Bob has been approved!!")
         else:
-            print(Fore.RED + "OSCAR BRIDGE THE SYSTEM!!" + Style.RESET_ALL)
+            print("     OSCAR BRIDGE THE SYSTEM!!")
+        print("*************************************")
             
         # Remove the padding
         plaintext = plaintext[:len_plaintext]

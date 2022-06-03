@@ -88,7 +88,12 @@ class salsa20:
                     [n_array[2], n_array[3], a2, k2_array[0]],
                     [k2_array[1],k2_array[2], k2_array[3], a3]]
         
-        return self.DoubleRound(self, x_matrix)
+        result_matrixLopp = x_matrix
+        for i in range(0, 10):
+            result_matrixLopp = self.DoubleRound(self, result_matrixLopp)
+        
+        return result_matrixLopp
+
 
 
     def ExmpansionFunction16(self, n, k):
